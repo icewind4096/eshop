@@ -186,4 +186,12 @@ public class UserService implements IUserService {
         }
         return ServerResponse.createByErrorMessage("查找用户数据失败");
     }
+
+    @Override
+    public ServerResponse checkAdminRole(User user) {
+        if ((user != null) && (user.getRole() == UserRoleEnum.ADMIN.getCode())){
+            return ServerResponse.createBySuccess();
+        }
+        return ServerResponse.createByError();
+    }
 }
