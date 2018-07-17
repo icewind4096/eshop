@@ -1,8 +1,8 @@
 package com.eshop.common;
 
 import com.eshop.enums.ResponseEnum;
-import org.codehaus.jackson.annotate.JsonIgnore;
-import org.codehaus.jackson.map.annotate.JsonSerialize;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 import java.io.Serializable;
 
@@ -71,7 +71,7 @@ public class ServerResponse<T> implements Serializable {
     }
 
     public static <T> ServerResponse<T> createBySuccess(T data){
-        return new ServerResponse<T>(ResponseEnum.SUCCESS.getCode(), data);
+        return new ServerResponse<T>(ResponseEnum.SUCCESS.getCode(), ResponseEnum.SUCCESS.getMessage(), data);
     }
 
     public static <T> ServerResponse<T> createBySuccess(String message, T data){

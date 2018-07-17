@@ -101,7 +101,7 @@ public class UserService implements IUserService {
         }
 
         String question = userMapper.getQuestionByUserName(userName);
-        if (StringUtils.isNotBlank(question) == false){
+        if (StringUtils.isBlank(question) == false){
             return ServerResponse.createBySuccess(question);
         }
 
