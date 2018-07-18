@@ -48,4 +48,25 @@ public class ProductManagerController {
         return productService.saveProduct(product);
     }
 
+    /**
+     * 修改产品上下架
+     * @param session
+     * @param prodcutId
+     * @param status
+     * @return
+     */
+    @RequestMapping(value = "setSaleStatus.do", method = RequestMethod.POST)
+    @ResponseBody
+    public ServerResponse setSaleStatus(HttpSession session, Integer prodcutId, Integer status){
+        User user = (User) session.getAttribute(ConstVariable.CURRENTUSER);
+        if (user == null){
+            return ServerResponse.createByErrorMessage(ResponseEnum.NEEDLOGIN.getCode(), "用户未登录");
+        }
+
+        if (userService.checkAdminRole(user).isSuccess() == false){
+            return ServerResponse.createByErrorMessage(ResponseEnum.NEEDLOGIN.getCode(), "用户无管理员权限");
+        }
+
+        return productService.setSaleStatus(prodcutId, status);
+    }
 }
