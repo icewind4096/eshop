@@ -13,8 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -71,7 +69,7 @@ public class CategoryService implements ICategoryService {
 
     //递归查询节点
     @Override
-    public ServerResponse selectCategoryAndChildrenById(int categoryId) {
+    public ServerResponse<List<Integer>> selectCategoryAndChildrenById(int categoryId) {
         Set<Category> categorySet = Sets.newHashSet();
         findChildrenCategory(categorySet, categoryId);
 

@@ -1,8 +1,10 @@
 package com.eshop.service.impl;
 
+import com.eshop.common.ConstVariable;
 import com.eshop.common.ServerResponse;
 import com.eshop.dao.CategoryMapper;
 import com.eshop.dao.ProductMapper;
+import com.eshop.enums.ProductStatusEnum;
 import com.eshop.enums.ResponseEnum;
 import com.eshop.pojo.Category;
 import com.eshop.pojo.Product;
@@ -10,10 +12,15 @@ import com.eshop.service.IProductService;
 import com.eshop.util.DateTimeUtil;
 import com.eshop.util.PropertiesUtil;
 import com.eshop.vo.ProductDetailVO;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by windvalley on 2018/7/18.
@@ -25,6 +32,9 @@ public class ProductService implements IProductService {
 
     @Autowired
     CategoryMapper categoryMapper;
+
+    @Autowired
+    CategoryService categoryService;
 
     @Override
     public ServerResponse saveProduct(Product product) {
@@ -84,6 +94,24 @@ public class ProductService implements IProductService {
         return ServerResponse.createBySuccess(assembleProductDetailVO(product));
     }
 
+    @Override
+    public ServerResponse<ProductDetailVO> getProductDetail(Integer prodcutId) {
+        if (prodcutId == null){
+            return ServerResponse.createByErrorMessage(ResponseEnum.PARAMATERERR.getCode(), ResponseEnum.PARAMATERERR.getMessage());
+        }
+
+        Product product = productMapper.selectByPrimaryKey(prodcutId);
+        if (product == null)  {
+            return ServerResponse.createByErrorMessage("产品已删除");
+        }
+
+        if (product.getStatus() != ProductStatusEnum.ONSALE.getCode())  {
+            return ServerResponse.createByErrorMessage("产品已下架");
+        }
+
+        return ServerResponse.createBySuccess(assembleProductDetailVO(product));
+    }
+
     private ProductDetailVO assembleProductDetailVO(Product product) {
         ProductDetailVO productDetailVO = new ProductDetailVO();
         BeanUtils.copyProperties(product, productDetailVO);
@@ -100,5 +128,51 @@ public class ProductService implements IProductService {
         productDetailVO.setUpdateTime(DateTimeUtil.dateTostring(product.getUpdateTime()));
 
         return productDetailVO;
+    }
+
+    public ServerResponse<PageInfo> getProductListByKeyWordCatory(String keyword, Integer categoryId, int pageNum, int pageSize, String orderBy) {
+        if ((StringUtils.isBlank(keyword) == true) && (categoryId == 0) ){
+            return ServerResponse.createByErrorMessage(ResponseEnum.PARAMATERERR.getCode(), ResponseEnum.PARAMATERERR.getMessage());
+        }
+
+        List<Integer> categoryIdList = new ArrayList<Integer>();
+        if (categoryId != null){
+            Category category = categoryMapper.selectByPrimaryKey(categoryId);
+            if ((category == null) && StringUtils.isBlank(keyword) == true){
+                PageHelper.startPage(pageNum, pageSize);
+                List<ProductDetailVO> productVOList = new ArrayList<>();
+                PageInfo pageInfo = new PageInfo(productVOList);
+                return ServerResponse.createBySuccess(pageInfo);
+            }
+            categoryIdList = categoryService.selectCategoryAndChildrenById(category.getId()).getData();
+        }
+
+        if (StringUtils.isNotBlank(keyword) == true){
+            keyword = new StringBuilder().append("%").append(keyword).append("%").toString();
+        }
+
+        PageHelper.startPage(pageNum, pageSize, orderBy);
+        if (StringUtils.isNoneBlank(orderBy)){
+            if (ConstVariable.ProductListOrderBy.PRICE_ASC_DESC.contains(orderBy)){
+                String[] orderByArray = orderBy.split("_");
+                //PageHelper的格式为 "field orderby"
+                PageHelper.orderBy(orderByArray[0] + " " + orderByArray[1]);
+            }
+        }
+        List<Product> productList = productMapper.selectByNameAndCategoryIds(StringUtils.isBlank(keyword)  == true ? null : keyword, categoryIdList.size() == 0 ? null : categoryIdList);
+
+        List<ProductDetailVO> productVOList = new ArrayList<>();
+        for (Product product : productList){
+            ProductDetailVO productDetailVO = assembleProductDetailVO(product);
+            productVOList.add(productDetailVO);
+        }
+
+        return ServerResponse.createBySuccess(new PageInfo(productVOList));
+/*
+        PageInfo pageInfo = new PageInfo(productList);
+        pageInfo.setList(productVOList);
+
+        return ServerResponse.createBySuccess(pageInfo);
+*/
     }
 }
