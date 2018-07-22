@@ -12,6 +12,7 @@ import com.eshop.service.IProductService;
 import com.eshop.util.DateTimeUtil;
 import com.eshop.util.PropertiesUtil;
 import com.eshop.vo.ProductDetailVO;
+import com.eshop.vo.ProductListVO;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import org.apache.commons.lang3.StringUtils;
@@ -167,12 +168,35 @@ public class ProductService implements IProductService {
             productVOList.add(productDetailVO);
         }
 
-        return ServerResponse.createBySuccess(new PageInfo(productVOList));
-/*
         PageInfo pageInfo = new PageInfo(productList);
         pageInfo.setList(productVOList);
 
         return ServerResponse.createBySuccess(pageInfo);
-*/
+    }
+
+    @Override
+    public ServerResponse<PageInfo> getProductList(Integer pageNum, Integer pageSize, String orderBy) {
+        PageHelper.startPage(pageNum, pageSize);
+
+        List<Product> productList = productMapper.selectList();
+
+        List<ProductListVO> productVOList = new ArrayList<>();
+        for (Product product : productList){
+            ProductListVO productListVO = assembleProductListVO(product);
+            productVOList.add(productListVO);
+        }
+
+        PageInfo pageInfo = new PageInfo(productList);
+        pageInfo.setList(productVOList);
+
+        return ServerResponse.createBySuccess(pageInfo);
+    }
+
+    private ProductListVO assembleProductListVO(Product product) {
+        ProductListVO productListVO = new ProductListVO();
+        BeanUtils.copyProperties(product, productListVO);
+        productListVO.setImageHost(PropertiesUtil.getProperty("ftp.server.http.prefix", "http://image.eshop.com/"));
+
+        return productListVO;
     }
 }

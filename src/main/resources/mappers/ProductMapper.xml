@@ -195,4 +195,12 @@
       </foreach>
     </if>
   </select>
+
+  <select id="selectList" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from mmall_product
+    ORDER BY id asc
+  </select>
+
 </mapper>
