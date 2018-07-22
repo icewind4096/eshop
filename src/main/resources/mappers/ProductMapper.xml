@@ -21,12 +21,14 @@
     id, category_id, name, subtitle, main_image, sub_images, detail, price, stock, status, 
     create_time, update_time
   </sql>
+
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
     from mmall_product
     where id = #{id,jdbcType=INTEGER}
   </select>
+
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
     delete from mmall_product
     where id = #{id,jdbcType=INTEGER}

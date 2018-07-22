@@ -69,4 +69,19 @@ public class ProductManagerController {
 
         return productService.setSaleStatus(prodcutId, status);
     }
+
+    @RequestMapping(value = "detail.do", method = RequestMethod.POST)
+    @ResponseBody
+    public ServerResponse getDetail(HttpSession session, Integer prodcutId){
+        User user = (User) session.getAttribute(ConstVariable.CURRENTUSER);
+        if (user == null){
+            return ServerResponse.createByErrorMessage(ResponseEnum.NEEDLOGIN.getCode(), "用户未登录");
+        }
+
+        if (userService.checkAdminRole(user).isSuccess() == false){
+            return ServerResponse.createByErrorMessage(ResponseEnum.NEEDLOGIN.getCode(), "用户无管理员权限");
+        }
+
+        return productService.managerProductDetail(prodcutId);
+    }
 }

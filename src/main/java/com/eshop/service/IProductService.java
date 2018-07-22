@@ -10,4 +10,6 @@ public interface IProductService {
     public ServerResponse saveProduct(Product product);
 
     public ServerResponse<String> setSaleStatus(Integer productId, Integer status);
+
+    ServerResponse managerProductDetail(Integer prodcutId);
 }
