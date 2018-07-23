@@ -115,4 +115,21 @@ public class ProductManagerController {
         }
         return productService.getProductList(pageNum, pageSize, orderBy);
     }
+
+    @RequestMapping(value = "search.do", method = RequestMethod.POST)
+    @ResponseBody
+    public ServerResponse<PageInfo> search(HttpSession session
+            ,@RequestParam(value = "productName", required = false)String productName, @RequestParam(value = "productId", required = false)Integer productId
+            ,@RequestParam(value = "pageNum", defaultValue = "1")Integer pageNum, @RequestParam(value = "pageSize", defaultValue = "10")Integer pageSize
+            ,@RequestParam(value = "orderBy", defaultValue = "")String orderBy){
+        User user = (User) session.getAttribute(ConstVariable.CURRENTUSER);
+        if (user == null){
+            return ServerResponse.createByErrorMessage(ResponseEnum.NEEDLOGIN.getCode(), "用户未登录");
+        }
+
+        if (userService.checkAdminRole(user).isSuccess() == false){
+            return ServerResponse.createByErrorMessage(ResponseEnum.NEEDLOGIN.getCode(), "用户无管理员权限");
+        }
+        return productService.searchProduct(productName, productId, pageNum, pageSize, orderBy);
+    }
 }

@@ -199,4 +199,27 @@ public class ProductService implements IProductService {
 
         return productListVO;
     }
+
+    @Override
+    public ServerResponse<PageInfo> searchProduct(String productName, Integer productId, Integer pageNum, Integer pageSize, String orderBy) {
+        PageHelper.startPage(pageNum, pageSize);
+        if (StringUtils.isNoneBlank(productName) == false){
+            productName = new StringBuilder().append("%").append(productName).append("%").toString();
+        }
+
+        List<Product> productList = productMapper.selectByNameAndId(productName, productId);
+
+        List<ProductListVO> productVOList = new ArrayList<>();
+        for (Product product : productList){
+            ProductListVO productListVO = assembleProductListVO(product);
+            productVOList.add(productListVO);
+        }
+
+        PageInfo pageInfo = new PageInfo(productList);
+        pageInfo.setList(productVOList);
+
+        return ServerResponse.createBySuccess(pageInfo);
+    }
 }
+
+
