@@ -78,12 +78,12 @@ public class ProductService implements IProductService {
     }
 
     @Override
-    public ServerResponse<ProductDetailVO> managerProductDetail(Integer prodcutId) {
-        if (prodcutId == null){
+    public ServerResponse<ProductDetailVO> managerProductDetail(Integer productId) {
+        if (productId == null){
             return ServerResponse.createByErrorMessage(ResponseEnum.PARAMATERERR.getCode(), ResponseEnum.PARAMATERERR.getMessage());
         }
 
-        Product product = productMapper.selectByPrimaryKey(prodcutId);
+        Product product = productMapper.selectByPrimaryKey(productId);
         if (product == null)  {
             return ServerResponse.createByErrorMessage("产品已删除");
         }
@@ -96,12 +96,12 @@ public class ProductService implements IProductService {
     }
 
     @Override
-    public ServerResponse<ProductDetailVO> getProductDetail(Integer prodcutId) {
-        if (prodcutId == null){
+    public ServerResponse<ProductDetailVO> getProductDetail(Integer productId) {
+        if (productId == null){
             return ServerResponse.createByErrorMessage(ResponseEnum.PARAMATERERR.getCode(), ResponseEnum.PARAMATERERR.getMessage());
         }
 
-        Product product = productMapper.selectByPrimaryKey(prodcutId);
+        Product product = productMapper.selectByPrimaryKey(productId);
         if (product == null)  {
             return ServerResponse.createByErrorMessage("产品已删除");
         }
@@ -132,7 +132,7 @@ public class ProductService implements IProductService {
     }
 
     public ServerResponse<PageInfo> getProductListByKeyWordCatory(String keyword, Integer categoryId, int pageNum, int pageSize, String orderBy) {
-        if ((StringUtils.isBlank(keyword) == true) && (categoryId == 0) ){
+        if ((StringUtils.isBlank(keyword) == true) && (categoryId == null) ){
             return ServerResponse.createByErrorMessage(ResponseEnum.PARAMATERERR.getCode(), ResponseEnum.PARAMATERERR.getMessage());
         }
 
@@ -203,7 +203,7 @@ public class ProductService implements IProductService {
     @Override
     public ServerResponse<PageInfo> searchProduct(String productName, Integer productId, Integer pageNum, Integer pageSize, String orderBy) {
         PageHelper.startPage(pageNum, pageSize);
-        if (StringUtils.isNoneBlank(productName) == false){
+        if (StringUtils.isNoneBlank(productName) == true){
             productName = new StringBuilder().append("%").append(productName).append("%").toString();
         }
 

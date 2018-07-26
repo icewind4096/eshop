@@ -13,9 +13,9 @@ public interface IProductService {
 
     public ServerResponse<String> setSaleStatus(Integer productId, Integer status);
 
-    ServerResponse managerProductDetail(Integer prodcutId);
+    ServerResponse managerProductDetail(Integer productId);
 
-    ServerResponse<ProductDetailVO> getProductDetail(Integer prodcutId);
+    ServerResponse<ProductDetailVO> getProductDetail(Integer productId);
 
     ServerResponse<PageInfo> getProductListByKeyWordCatory(String keyword, Integer categoryId, int pageNum, int pageSize, String orderBy);
 
