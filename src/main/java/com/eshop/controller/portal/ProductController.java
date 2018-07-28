@@ -27,8 +27,8 @@ public class ProductController {
 
     @RequestMapping(value = "detail.do", method = RequestMethod.POST)
     @ResponseBody
-    public ServerResponse<ProductDetailVO> getDetail(HttpSession session, Integer prodcutId){
-        return productService.getProductDetail(prodcutId);
+    public ServerResponse<ProductDetailVO> getDetail(HttpSession session, Integer productId){
+        return productService.getProductDetail(productId);
     }
 
     @RequestMapping(value = "list.do", method = RequestMethod.POST)

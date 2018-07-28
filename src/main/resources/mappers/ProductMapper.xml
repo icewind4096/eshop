@@ -203,4 +203,21 @@
     ORDER BY id asc
   </select>
 
+  <select id="selectByNameAndId" resultMap="BaseResultMap" parameterType="map">
+    select
+    <include refid="Base_Column_List" />
+    from mmall_product
+    <where>
+      <if test="productName != null">
+        and name like #{productName}
+      </if>
+      <if test="productId != null">
+        and id = #{productId}
+      </if>
+    </where>
+    ORDER BY id asc
+  </select>
+
+
+
 </mapper>
