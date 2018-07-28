@@ -12,6 +12,7 @@ import com.eshop.util.BigDecimalUtil;
 import com.eshop.util.PropertiesUtil;
 import com.eshop.vo.CartProductVO;
 import com.eshop.vo.CartVO;
+import com.google.common.base.Splitter;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -30,6 +31,39 @@ public class CartService implements ICartService {
 
     @Autowired
     ProductMapper productMapper;
+
+    public ServerResponse<CartVO> list(Integer userId) {
+        if (userId == null){
+            return ServerResponse.createByErrorMessage(ResponseEnum.PARAMATERERR.getCode(), ResponseEnum.PARAMATERERR.getMessage());
+        }
+
+        CartVO cartVO = getCartVOLimit(userId);
+
+        return ServerResponse.createBySuccess(cartVO);
+    }
+
+    @Override
+    public ServerResponse<CartVO> checkStatus(Integer userId, Integer status, String productIds) {
+        List<String> productIdList = Splitter.on(",").splitToList(productIds);
+        if ((userId == null) || (CollectionUtils.isEmpty(productIdList))){
+            return ServerResponse.createByErrorMessage(ResponseEnum.PARAMATERERR.getCode(), ResponseEnum.PARAMATERERR.getMessage());
+        }
+
+        cartMapper.checkStatusCartByUserIdAndProducts(userId, status, productIdList);
+
+        CartVO cartVO = getCartVOLimit(userId);
+
+        return ServerResponse.createBySuccess(cartVO);
+    }
+
+    @Override
+    public ServerResponse<Integer> getCartProductCount(Integer userId) {
+        if (userId == null){
+            return ServerResponse.createByErrorMessage(ResponseEnum.PARAMATERERR.getCode(), ResponseEnum.PARAMATERERR.getMessage());
+        }
+
+        return ServerResponse.createBySuccess(cartMapper.selectCartProductCount(userId));
+    }
 
     @Override
     public ServerResponse<CartVO> add(Integer userId, Integer productId, Integer count) {
@@ -56,6 +90,37 @@ public class CartService implements ICartService {
         return ServerResponse.createBySuccess(cartVO);
     }
 
+    @Override
+    public ServerResponse<CartVO> update(Integer userId, Integer productId, Integer count) {
+        if ((userId == null) || count == null ){
+            return ServerResponse.createByErrorMessage(ResponseEnum.PARAMATERERR.getCode(), ResponseEnum.PARAMATERERR.getMessage());
+        }
+        Cart cart = cartMapper.selectByUserIdProductId(userId, productId);
+
+        if (cart != null){
+            cart.setQuantity(cart.getQuantity() + count);
+            cartMapper.updateByPrimaryKeySelective(cart);
+        }
+
+        CartVO cartVO = getCartVOLimit(userId);
+
+        return ServerResponse.createBySuccess(cartVO);
+    }
+
+    @Override
+    public ServerResponse<CartVO> delete(Integer userId, String productIds) {
+        List<String> productIdList = Splitter.on(",").splitToList(productIds);
+        if ((userId == null) || (CollectionUtils.isEmpty(productIdList))){
+            return ServerResponse.createByErrorMessage(ResponseEnum.PARAMATERERR.getCode(), ResponseEnum.PARAMATERERR.getMessage());
+        }
+
+        cartMapper.deleteCartByUserIdAndProducts(userId, productIdList);
+
+        CartVO cartVO = getCartVOLimit(userId);
+
+        return ServerResponse.createBySuccess(cartVO);
+    }
+
     private CartVO getCartVOLimit(Integer userId){
         CartVO cartVO = new CartVO();
 
@@ -63,7 +128,7 @@ public class CartService implements ICartService {
 
         List<CartProductVO> cartProductVOList = new ArrayList<CartProductVO>();
 
-        if (CollectionUtils.isNotEmpty(cartList) == false){
+        if (CollectionUtils.isNotEmpty(cartList) == true){
             cartListTocartProductVOList(cartList, cartProductVOList);
             cartVO.setCartTotalPrice(calculateCartTotalPrice(cartProductVOList));
             cartVO.setCartProductVOList(cartProductVOList);

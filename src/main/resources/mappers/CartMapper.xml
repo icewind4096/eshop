@@ -3,8 +3,8 @@
 <mapper namespace="com.eshop.dao.CartMapper">
   <resultMap id="BaseResultMap" type="com.eshop.pojo.Cart">
     <constructor>
-      <idArg column="id" javaType="java.lang.Integer" jdbcType="INTEGER" />
-      <arg column="user_id" javaType="java.lang.Integer" jdbcType="INTEGER" />
+      <idArg column="id" javaType="java.lang.Integer" jdbcType="INTEGER"  />
+      <arg column="user_id" javaType="java.lang.Integer" jdbcType="INTEGER"/>
       <arg column="product_id" javaType="java.lang.Integer" jdbcType="INTEGER" />
       <arg column="quantity" javaType="java.lang.Integer" jdbcType="INTEGER" />
       <arg column="checked" javaType="java.lang.Integer" jdbcType="INTEGER" />
@@ -128,6 +128,35 @@
     <include refid="Base_Column_List" />
     from mmall_cart
     where user_id = #{userId}
+  </select>
+
+  <delete id="deleteCartByUserIdAndProducts" parameterType="map">
+    delete
+    from mmall_cart
+    where user_id = #{userId}
+    <if test="productIdList != null">
+      and product_id in
+      <foreach collection="productIdList" item="productId" index="index" open="(" separator="," close=")">
+        #{productId}
+      </foreach>
+    </if>
+  </delete>
+
+  <update id="checkStatusCartByUserIdAndProducts" parameterType="map">
+    update mmall_cart
+    set checked = #{status}
+    ,update_TIME = now()
+    where user_id = #{userId}
+    <if test="productIdList != null">
+      and product_id in
+      <foreach collection="productIdList" item="productId" index="index" open="(" separator="," close=")">
+        #{productId}
+      </foreach>
+    </if>
+  </update>
+
+  <select id="selectCartProductCount" parameterType="int" resultType="int">
+    select IFNULL(sum(quantity), 0) as count from mmall_cart where user_id = #{userId}
   </select>
 
 </mapper>
