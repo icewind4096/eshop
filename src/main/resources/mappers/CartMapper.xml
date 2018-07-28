@@ -12,15 +12,25 @@
       <arg column="update_time" javaType="java.util.Date" jdbcType="TIMESTAMP" />
     </constructor>
   </resultMap>
+
   <sql id="Base_Column_List">
     id, user_id, product_id, quantity, checked, create_time, update_time
   </sql>
+
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
     from mmall_cart
     where id = #{id,jdbcType=INTEGER}
   </select>
+
+  <select id="selectCartByUserId" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from mmall_cart
+    where user_id = #{userId}
+  </select>
+
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
     delete from mmall_cart
     where id = #{id,jdbcType=INTEGER}
@@ -121,13 +131,6 @@
     <include refid="Base_Column_List" />
     from mmall_cart
     where user_id = #{userId} and product_id = #{productId}
-  </select>
-
-  <select id="selectCartByUserId" parameterType="int" resultType="com.eshop.pojo.Cart">
-    select
-    <include refid="Base_Column_List" />
-    from mmall_cart
-    where user_id = #{userId}
   </select>
 
   <delete id="deleteCartByUserIdAndProducts" parameterType="map">

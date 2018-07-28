@@ -1,7 +1,10 @@
 package com.eshop.pojo;
 
+import org.springframework.stereotype.Component;
+
 import java.util.Date;
 
+@Component
 public class Cart {
     private Integer id;
 

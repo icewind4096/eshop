@@ -44,9 +44,16 @@ public class CartService implements ICartService {
 
     @Override
     public ServerResponse<CartVO> checkStatus(Integer userId, Integer status, String productIds) {
-        List<String> productIdList = Splitter.on(",").splitToList(productIds);
-        if ((userId == null) || (CollectionUtils.isEmpty(productIdList))){
+        if (userId == null){
             return ServerResponse.createByErrorMessage(ResponseEnum.PARAMATERERR.getCode(), ResponseEnum.PARAMATERERR.getMessage());
+        }
+
+        List<String> productIdList = null;
+        if (productIds != null){
+            productIdList = Splitter.on(",").splitToList(productIds);
+            if (CollectionUtils.isEmpty(productIdList) == true){
+                return ServerResponse.createByErrorMessage(ResponseEnum.PARAMATERERR.getCode(), ResponseEnum.PARAMATERERR.getMessage());
+            }
         }
 
         cartMapper.checkStatusCartByUserIdAndProducts(userId, status, productIdList);
@@ -98,7 +105,7 @@ public class CartService implements ICartService {
         Cart cart = cartMapper.selectByUserIdProductId(userId, productId);
 
         if (cart != null){
-            cart.setQuantity(cart.getQuantity() + count);
+            cart.setQuantity(count);
             cartMapper.updateByPrimaryKeySelective(cart);
         }
 
