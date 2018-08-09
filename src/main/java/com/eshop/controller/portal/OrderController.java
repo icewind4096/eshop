@@ -15,6 +15,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
@@ -115,5 +116,27 @@ public class OrderController {
             return ServerResponse.createByErrorMessage(ResponseEnum.NEEDLOGIN.getCode(), ResponseEnum.NEEDLOGIN.getMessage());
         }
         return orderService.getOrderCateProduct(user.getId());
+    }
+
+    @RequestMapping("detail.do")
+    @ResponseBody
+    public ServerResponse detail(HttpSession session, Long orderNo) {
+        User user = (User) session.getAttribute(ConstVariable.CURRENTUSER);
+        if (user == null) {
+            return ServerResponse.createByErrorMessage(ResponseEnum.NEEDLOGIN.getCode(), ResponseEnum.NEEDLOGIN.getMessage());
+        }
+        return orderService.getOrderDetail(user.getId(), orderNo);
+    }
+
+    @RequestMapping("list.do")
+    @ResponseBody
+    public ServerResponse list(HttpSession session
+                              ,@RequestParam(value = "pageNumb", defaultValue = "1") int pageNum
+                              ,@RequestParam(value = "pageSize", defaultValue = "1") int pageSize) {
+        User user = (User) session.getAttribute(ConstVariable.CURRENTUSER);
+        if (user == null) {
+            return ServerResponse.createByErrorMessage(ResponseEnum.NEEDLOGIN.getCode(), ResponseEnum.NEEDLOGIN.getMessage());
+        }
+        return orderService.getOrderList(user.getId(), pageNum, pageSize);
     }
 }

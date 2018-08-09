@@ -27,6 +27,8 @@ import com.eshop.vo.OrderItemVO;
 import com.eshop.vo.OrderProductVO;
 import com.eshop.vo.OrderVO;
 import com.eshop.vo.ShippingVO;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.google.common.collect.Lists;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -443,5 +445,43 @@ public class OrderService implements IOrderService {
         orderProductVO.setOrderItemVOList(orderItemVOList);
         orderProductVO.setImageHost(PropertiesUtil.getProperty("ftp.server.http.prefix"));
         return ServerResponse.createBySuccess(orderProductVO);
+    }
+
+    @Override
+    public ServerResponse<OrderVO> getOrderDetail(Integer userId, Long orderNo) {
+        Order order = orderMapper.findByUserIdAndOrderNo(userId, orderNo);
+        if (order == null){
+            return ServerResponse.createByErrorMessage("该用户订单不存在");
+        }
+
+        List<OrderItem> orderItemList = orderItemMapper.getListByOrderNoAndUserId(orderNo, userId);
+        OrderVO orderVO = assembleOrderVO(order, orderItemList);
+        return ServerResponse.createBySuccess(orderVO);
+    }
+
+    @Override
+    public ServerResponse<PageInfo> getOrderList(Integer userId, int pageNum, int pageSize) {
+        PageHelper.startPage(pageNum, pageSize);
+        List<Order> orderList = orderMapper.selectByUserId(userId);
+        List<OrderVO> orderVOList = assembleOrderVOList(orderList, userId);
+        PageInfo pageInfo = new PageInfo(orderList);
+        pageInfo.setList(orderVOList);
+        return ServerResponse.createBySuccess(pageInfo);
+    }
+
+    private List<OrderVO> assembleOrderVOList(List<Order> orderList, Integer userId) {
+        List<OrderVO> orderVOList = new ArrayList<OrderVO>();
+        for (Order order : orderList){
+            List<OrderItem> orderItemList = new ArrayList<OrderItem>();
+            if (userId != null){
+                orderItemList = orderItemMapper.getListByOrderNoAndUserId(order.getOrderNo(), userId);
+            }
+            else {
+                //// TODO: 2018/8/10  管理员查询不需要传递UserId
+            }
+            OrderVO orderVO = assembleOrderVO(order, orderItemList);
+            orderVOList.add(orderVO);
+        }
+        return orderVOList;
     }
 }
