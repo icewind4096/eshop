@@ -27,4 +27,6 @@ public interface CartMapper {
     int checkStatusCartByUserIdAndProducts(@Param("userId") Integer userId, @Param("status") Integer status, @Param("productIdList") List<String> productIdList);
 
     int selectCartProductCount(@Param("userId") Integer userId);
+
+    List<Cart> selectCheckedCartByUserId(Integer userId);
 }

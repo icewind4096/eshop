@@ -13,6 +13,8 @@ public class ConstVariable {
     public static final String USERNAME = "userName";
     public static final String EMAIL = "email";
 
+    public static final String PAYTYPESCANER = "eshop扫码支付";
+
     public interface ProductListOrderBy{
         Set<String> PRICE_ASC_DESC = Sets.newHashSet("price_desc", "price_asc");
     }

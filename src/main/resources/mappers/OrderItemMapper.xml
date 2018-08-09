@@ -26,7 +26,7 @@
     from mmall_order_item
     where id = #{id,jdbcType=INTEGER}
   </select>
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
     delete from mmall_order_item
     where id = #{id,jdbcType=INTEGER}
   </delete>
@@ -38,7 +38,7 @@
     values (#{id,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}, #{orderNo,jdbcType=BIGINT}, 
       #{productId,jdbcType=INTEGER}, #{productName,jdbcType=VARCHAR}, #{productImage,jdbcType=VARCHAR}, 
       #{currentUnitPrice,jdbcType=DECIMAL}, #{quantity,jdbcType=INTEGER}, #{totalPrice,jdbcType=DECIMAL}, 
-      #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP})
+      now(), now())
   </insert>
   <insert id="insertSelective" parameterType="com.eshop.pojo.OrderItem">
     insert into mmall_order_item
@@ -113,7 +113,7 @@
       </if>
     </trim>
   </insert>
-  <update id="updateByPrimaryKeySelective" parameterType="com.eshop.pojo.OrderItem">
+    <update id="updateByPrimaryKeySelective" parameterType="com.eshop.pojo.OrderItem">
     update mmall_order_item
     <set>
       <if test="userId != null">
@@ -163,4 +163,27 @@
       update_time = #{updateTime,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=INTEGER}
   </update>
+
+  <select id="getListByOrderNoAndUserId" resultMap="BaseResultMap" parameterType="map">
+    select
+    <include refid="Base_Column_List" />
+    from mmall_order_item
+    where user_id = #{userId} and order_no = #{orderNo}
+  </select>
+
+  <insert id="insertOrderItemList" parameterType="list">
+    insert into mmall_order_item (id, user_id, order_no,
+      product_id, product_name, product_image,
+      current_unit_price, quantity, total_price,
+      create_time, update_time)
+    values
+      <foreach collection="orderItemList" index="index" item="item" separator=",">
+        (
+        #{item.id}, #{item.userId}, #{item.orderNo},
+        #{item.productId}, #{item.productName}, #{item.productImage},
+        #{item.currentUnitPrice}, #{item.quantity}, #{item.totalPrice},
+        now(), now()
+        )
+      </foreach>
+  </insert>
 </mapper>
