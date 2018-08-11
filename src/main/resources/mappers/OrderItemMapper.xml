@@ -170,8 +170,7 @@
     from mmall_order_item
     where user_id = #{userId} and order_no = #{orderNo}
   </select>
-
-  <insert id="insertOrderItemList" parameterType="list">
+    <insert id="insertOrderItemList" parameterType="list">
     insert into mmall_order_item (id, user_id, order_no,
       product_id, product_name, product_image,
       current_unit_price, quantity, total_price,
@@ -186,4 +185,12 @@
         )
       </foreach>
   </insert>
+
+  <select id="getListByOrderNo" resultMap="BaseResultMap" parameterType="map">
+    select
+    <include refid="Base_Column_List" />
+    from mmall_order_item
+    where order_no = #{orderNo}
+  </select>
+
 </mapper>

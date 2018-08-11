@@ -108,6 +108,16 @@ public class OrderController {
         return orderService.create(user.getId(), shippingId);
     }
 
+    @RequestMapping("cancel.do")
+    @ResponseBody
+    public ServerResponse cancel(HttpSession session, Long orderNo) {
+        User user = (User) session.getAttribute(ConstVariable.CURRENTUSER);
+        if (user == null) {
+            return ServerResponse.createByErrorMessage(ResponseEnum.NEEDLOGIN.getCode(), ResponseEnum.NEEDLOGIN.getMessage());
+        }
+        return orderService.cancel(user.getId(), orderNo);
+    }
+
     @RequestMapping("getOrderCateProduct.do")
     @ResponseBody
     public ServerResponse getOrderCateProduct(HttpSession session) {
