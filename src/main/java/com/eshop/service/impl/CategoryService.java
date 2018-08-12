@@ -6,9 +6,8 @@ import com.eshop.pojo.Category;
 import com.eshop.service.ICategoryService;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -20,9 +19,8 @@ import java.util.Set;
  * Created by mecwa on 2018/7/16.
  */
 @Service
+@Slf4j
 public class CategoryService implements ICategoryService {
-    private Logger logger = LoggerFactory.getLogger(CategoryService.class);
-
     @Autowired
     CategoryMapper categoryMapper;
 
@@ -62,7 +60,7 @@ public class CategoryService implements ICategoryService {
     public ServerResponse<List<Category>> getChildrenParallelCategory(int categoryId) {
         List<Category> categories = categoryMapper.selectCategoryChildrenByParentId(categoryId);
         if (CollectionUtils.isEmpty(categories) == true){
-            logger.info("未找到当前分类的子节点");
+            log.info("未找到当前分类的子节点");
         }
         return ServerResponse.createBySuccess(categories);
     }
