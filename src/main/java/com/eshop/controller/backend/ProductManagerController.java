@@ -11,7 +11,6 @@ import com.eshop.service.IUserService;
 import com.eshop.util.PropertiesUtil;
 import com.github.pagehelper.PageInfo;
 import com.google.common.collect.Maps;
-import com.sun.deploy.net.HttpResponse;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
