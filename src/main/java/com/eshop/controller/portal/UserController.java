@@ -43,7 +43,6 @@ public class UserController {
     public ServerResponse<User> login(HttpServletResponse httpServletResponse, String userName, String password, HttpSession session){
         ServerResponse<User> response = userService.login(userName, password);
         if (response.isSuccess() == true){
-//            session.setAttribute(ConstVariable.CURRENTUSER, response.getData());
             CookieUtil.writeLoginToken(httpServletResponse, session.getId());
             RedisPoolUtil.set(session.getId(), JSONUtil.object2String(response.getData()), ConstVariable.RedisCache.REDIS_SESSION_EXTIME);
         }
@@ -59,6 +58,17 @@ public class UserController {
     @ResponseBody
     public ServerResponse<String> logout(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse){
         return userService.logout(httpServletRequest, httpServletResponse);
+    }
+
+    /**
+     * 根据请求的request中的cook中的cookName->sessionId->userJSONString->user object
+     * @param httpServletRequest
+     * @return
+     */
+    @RequestMapping(value = "get_user_info.do", method = RequestMethod.POST)
+    @ResponseBody
+    public ServerResponse<User> getUserInfo(HttpServletRequest httpServletRequest){
+        return userService.getUserInfo(httpServletRequest);
     }
 
     /**
@@ -84,17 +94,6 @@ public class UserController {
     @ResponseBody
     public ServerResponse<String> checkValid(String value, String type){
         return userService.checkValid(value, type);
-    }
-
-    /**
-     * 根据请求的request中的cook中的cookName->sessionId->userJSONString->user object
-     * @param httpServletRequest
-     * @return
-     */
-    @RequestMapping(value = "get_user_info.do", method = RequestMethod.POST)
-    @ResponseBody
-    public ServerResponse<User> getUserInfo(HttpServletRequest httpServletRequest){
-        return userService.getUserInfo(httpServletRequest);
     }
 
     /**

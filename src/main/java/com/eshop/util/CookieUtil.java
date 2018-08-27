@@ -55,7 +55,7 @@ public class CookieUtil {
         if (cookies != null){
             for (Cookie cookie : cookies){
                 if (StringUtils.equals(cookie.getName(), COOKIE_NAME) == true){
-                    addCookie(response, cookie.getName(), cookie.getValue(), cookie.getDomain(), "/", 0);
+                    addCookie(response, cookie.getName(), cookie.getValue(), COOKIE_DOMAIN, "/", 0);
                     return;
                 }
             }
