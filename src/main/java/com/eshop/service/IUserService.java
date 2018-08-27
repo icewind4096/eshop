@@ -3,6 +3,8 @@ package com.eshop.service;
 import com.eshop.common.ServerResponse;
 import com.eshop.pojo.User;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 /**
@@ -15,7 +17,7 @@ public interface IUserService {
 
     ServerResponse<String> checkValid(String value, String type);
 
-    ServerResponse<User> getUserInfo(HttpSession session);
+    ServerResponse<User> getUserInfo(HttpServletRequest httpServletRequest);
 
     ServerResponse<String> getQuestion(String userName);
 
@@ -30,4 +32,6 @@ public interface IUserService {
     ServerResponse<User> getInformation(Integer userId);
 
     ServerResponse checkAdminRole(User user);
+
+    ServerResponse logout(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse);
 }

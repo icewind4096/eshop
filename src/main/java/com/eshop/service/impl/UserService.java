@@ -7,11 +7,17 @@ import com.eshop.dao.UserMapper;
 import com.eshop.enums.UserRoleEnum;
 import com.eshop.pojo.User;
 import com.eshop.service.IUserService;
+import com.eshop.util.CookieUtil;
+import com.eshop.util.JSONUtil;
 import com.eshop.util.MD5Util;
+import com.eshop.util.RedisPoolUtil;
+import com.github.pagehelper.util.StringUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.util.UUID;
 
@@ -86,11 +92,26 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public ServerResponse<User> getUserInfo(HttpSession session) {
-        if (session.getAttribute(ConstVariable.CURRENTUSER) != null){
-            return ServerResponse.createBySuccess((User) session.getAttribute(ConstVariable.CURRENTUSER));
+    public ServerResponse<User> getUserInfo(HttpServletRequest httpServletRequest) {
+        String loginToken = CookieUtil.readLoginToken(httpServletRequest);
+        if (StringUtil.isEmpty(loginToken) == false){
+            String userJSON = RedisPoolUtil.get(loginToken);
+            User user = JSONUtil.string2Object(userJSON, User.class);
+            if (user != null){
+                return ServerResponse.createBySuccess(user);
+            }
         }
+
         return ServerResponse.createByErrorMessage("用户未登陆, 无法获得当前用户登陆信息");
+    }
+
+    @Override
+    public ServerResponse logout(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
+        String loginToken = CookieUtil.readLoginToken(httpServletRequest);
+        CookieUtil.delLoginToken(httpServletRequest, httpServletResponse);
+        RedisPoolUtil.del(loginToken);
+
+        return ServerResponse.createBySuccess();
     }
 
     @Override

@@ -8,6 +8,7 @@ import com.eshop.service.IUserService;
 import com.eshop.util.CookieUtil;
 import com.eshop.util.JSONUtil;
 import com.eshop.util.RedisPoolUtil;
+import com.github.pagehelper.util.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -39,13 +40,11 @@ public class UserController {
      */
     @RequestMapping(value = "login.do", method = RequestMethod.POST)
     @ResponseBody
-    public ServerResponse<User> login(HttpServletResponse httpServletResponse, HttpServletRequest httpServletRequest, String userName, String password, HttpSession session){
+    public ServerResponse<User> login(HttpServletResponse httpServletResponse, String userName, String password, HttpSession session){
         ServerResponse<User> response = userService.login(userName, password);
         if (response.isSuccess() == true){
 //            session.setAttribute(ConstVariable.CURRENTUSER, response.getData());
             CookieUtil.writeLoginToken(httpServletResponse, session.getId());
-            CookieUtil.readLoginToken(httpServletRequest);
-            CookieUtil.delLoginToken(httpServletRequest, httpServletResponse);
             RedisPoolUtil.set(session.getId(), JSONUtil.object2String(response.getData()), ConstVariable.RedisCache.REDIS_SESSION_EXTIME);
         }
         return response;
@@ -53,14 +52,13 @@ public class UserController {
 
     /**
      * 用户登出
-     * @param session
+     * @param httpServletRequest
      * @return
      */
     @RequestMapping(value = "logout.do", method = RequestMethod.GET)
     @ResponseBody
-    public ServerResponse<String> logout(HttpSession session){
-        session.removeAttribute(ConstVariable.CURRENTUSER);
-        return ServerResponse.createBySuccess();
+    public ServerResponse<String> logout(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse){
+        return userService.logout(httpServletRequest, httpServletResponse);
     }
 
     /**
@@ -89,14 +87,14 @@ public class UserController {
     }
 
     /**
-     * 从session中得到用户信息
-     * @param session
+     * 根据请求的request中的cook中的cookName->sessionId->userJSONString->user object
+     * @param httpServletRequest
      * @return
      */
     @RequestMapping(value = "get_user_info.do", method = RequestMethod.POST)
     @ResponseBody
-    public ServerResponse<User> getUserInfo(HttpSession session){
-        return userService.getUserInfo(session);
+    public ServerResponse<User> getUserInfo(HttpServletRequest httpServletRequest){
+        return userService.getUserInfo(httpServletRequest);
     }
 
     /**

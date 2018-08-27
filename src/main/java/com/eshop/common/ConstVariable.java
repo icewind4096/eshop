@@ -18,4 +18,8 @@ public class ConstVariable {
     public interface ProductListOrderBy{
         Set<String> PRICE_ASC_DESC = Sets.newHashSet("price_desc", "price_asc");
     }
+
+    public interface RedisCache{
+        int REDIS_SESSION_EXTIME = 60 * 30; //30分钟有效期， 基本单位是秒
+    }
 }
