@@ -5,12 +5,18 @@ import com.eshop.common.ServerResponse;
 import com.eshop.enums.ResponseEnum;
 import com.eshop.pojo.User;
 import com.eshop.service.IUserService;
+import com.eshop.util.CookieUtil;
+import com.eshop.util.JSONUtil;
+import com.eshop.util.RedisPoolUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.xml.ws.Response;
 
@@ -33,10 +39,14 @@ public class UserController {
      */
     @RequestMapping(value = "login.do", method = RequestMethod.POST)
     @ResponseBody
-    public ServerResponse<User> login(String userName, String password, HttpSession session){
+    public ServerResponse<User> login(HttpServletResponse httpServletResponse, HttpServletRequest httpServletRequest, String userName, String password, HttpSession session){
         ServerResponse<User> response = userService.login(userName, password);
         if (response.isSuccess() == true){
-            session.setAttribute(ConstVariable.CURRENTUSER, response.getData());
+//            session.setAttribute(ConstVariable.CURRENTUSER, response.getData());
+            CookieUtil.writeLoginToken(httpServletResponse, session.getId());
+            CookieUtil.readLoginToken(httpServletRequest);
+            CookieUtil.delLoginToken(httpServletRequest, httpServletResponse);
+            RedisPoolUtil.set(session.getId(), JSONUtil.object2String(response.getData()), ConstVariable.RedisCache.REDIS_SESSION_EXTIME);
         }
         return response;
     }
