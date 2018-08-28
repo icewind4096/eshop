@@ -9,7 +9,7 @@ import com.eshop.pojo.User;
 import com.eshop.service.IUserService;
 import com.eshop.util.CookieUtil;
 import com.eshop.util.MD5Util;
-import com.eshop.util.RedisPoolUtil;
+import com.eshop.util.RedisShardedPoolUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -101,7 +101,7 @@ public class UserService implements IUserService {
     public ServerResponse logout(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
         String loginToken = CookieUtil.readLoginToken(httpServletRequest);
         CookieUtil.delLoginToken(httpServletRequest, httpServletResponse);
-        RedisPoolUtil.del(loginToken);
+        RedisShardedPoolUtil.del(loginToken);
 
         return ServerResponse.createBySuccess();
     }
@@ -124,7 +124,7 @@ public class UserService implements IUserService {
     public ServerResponse<String> checkAnswer(String userName, String question, String answer) {
         if (userMapper.checkAnswer(userName, question, answer) > 0){
             String forgetToken = UUID.randomUUID().toString();
-            RedisPoolUtil.set(ConstVariable.TOKENPREFIX + userName, forgetToken, 60 * 60 * 12);
+            RedisShardedPoolUtil.set(ConstVariable.TOKENPREFIX + userName, forgetToken, 60 * 60 * 12);
             return ServerResponse.createBySuccess(forgetToken);
         }
         return ServerResponse.createByErrorMessage("用户问题答案错误");
@@ -141,7 +141,7 @@ public class UserService implements IUserService {
             return ServerResponse.createByErrorMessage("用户不存在");
         }
 
-        String cacheToken = RedisPoolUtil.get(ConstVariable.TOKENPREFIX + userName);
+        String cacheToken = RedisShardedPoolUtil.get(ConstVariable.TOKENPREFIX + userName);
         if (StringUtils.isBlank(cacheToken) == true){
             return ServerResponse.createByErrorMessage("无效的Token");
         }

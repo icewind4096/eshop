@@ -8,7 +8,7 @@ import com.eshop.pojo.User;
 import com.eshop.service.IUserService;
 import com.eshop.util.CookieUtil;
 import com.eshop.util.JSONUtil;
-import com.eshop.util.RedisPoolUtil;
+import com.eshop.util.RedisShardedPoolUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -42,7 +42,7 @@ public class UserController {
         ServerResponse<User> response = userService.login(userName, password);
         if (response.isSuccess() == true){
             CookieUtil.writeLoginToken(httpServletResponse, session.getId());
-            RedisPoolUtil.set(session.getId(), JSONUtil.object2String(response.getData()), ConstVariable.RedisCache.REDIS_SESSION_EXTIME);
+            RedisShardedPoolUtil.set(session.getId(), JSONUtil.object2String(response.getData()), ConstVariable.RedisCache.REDIS_SESSION_EXTIME);
         }
         return response;
     }
@@ -133,7 +133,7 @@ public class UserController {
 
     /**
      * 重置密码
-     * @param session
+     * @param httpServletRequest
      * @param passwordOld
      * @param passwordNew
      * @return
@@ -150,7 +150,7 @@ public class UserController {
 
     /**
      * 修改用户数据
-     * @param session
+     * @param httpServletRequest
      * @param user
      * @return
      */
@@ -169,14 +169,14 @@ public class UserController {
         if (serverResponse.isSuccess() == true){
             serverResponse.getData().setUsername(currentUser.getUsername());
             String loginToken = CookieUtil.readLoginToken(httpServletRequest);
-            RedisPoolUtil.set(loginToken, JSONUtil.object2String(serverResponse.getData()), ConstVariable.RedisCache.REDIS_SESSION_EXTIME);
+            RedisShardedPoolUtil.set(loginToken, JSONUtil.object2String(serverResponse.getData()), ConstVariable.RedisCache.REDIS_SESSION_EXTIME);
         }
         return serverResponse;
     }
 
     /**
      * 查找用户数据
-     * @param session
+     * @param httpServletRequest
      * @return
      */
     @RequestMapping(value = "get_information.do", method = RequestMethod.POST)

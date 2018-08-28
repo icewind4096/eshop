@@ -1,14 +1,14 @@
 package com.eshop.util;
 
-import com.eshop.common.RedisPool;
 import lombok.extern.slf4j.Slf4j;
-import redis.clients.jedis.Jedis;
+import com.eshop.common.RedisShardedPool;
+import redis.clients.jedis.ShardedJedis;
 
 /**
  * Created by windvalley on 2018/8/25.
  */
 @Slf4j
-public class RedisPoolUtil {
+public class RedisShardedPoolUtil {
     /**
      * 设置Key对应的value
      * @param key
@@ -16,16 +16,16 @@ public class RedisPoolUtil {
      * @return
      */
     public static String set(String key, String value){
-        Jedis jedis = null;
+        ShardedJedis jedis = null;
         String result = null;
         try {
-            jedis = RedisPool.getJedis();
+            jedis = RedisShardedPool.getJedis();
             result = jedis.set(key, value);
-            RedisPool.returnResource(jedis);
+            RedisShardedPool.returnResource(jedis);
             return result;
         } catch (Exception e){
             log.error("set key:{} value:{} error", key, value, e);
-            RedisPool.returnBrokenResource(jedis);
+            RedisShardedPool.returnBrokenResource(jedis);
             return null;
         }
     }
@@ -38,16 +38,16 @@ public class RedisPoolUtil {
      * @return
      */
     public static String set(String key, String value, int expireTime){
-        Jedis jedis = null;
+        ShardedJedis jedis = null;
         String result = null;
         try {
-            jedis = RedisPool.getJedis();
+            jedis = RedisShardedPool.getJedis();
             result = jedis.setex(key, expireTime, value);
-            RedisPool.returnResource(jedis);
+            RedisShardedPool.returnResource(jedis);
             return result;
         } catch (Exception e){
             log.error("setExpire key:{} value:{} error", key, value, e);
-            RedisPool.returnBrokenResource(jedis);
+            RedisShardedPool.returnBrokenResource(jedis);
             return null;
         }
     }
@@ -58,16 +58,16 @@ public class RedisPoolUtil {
      * @return
      */
     public static String get(String key){
-        Jedis jedis = null;
+        ShardedJedis jedis = null;
         String result = null;
         try {
-            jedis = RedisPool.getJedis();
+            jedis = RedisShardedPool.getJedis();
             result = jedis.get(key);
-            RedisPool.returnResource(jedis);
+            RedisShardedPool.returnResource(jedis);
             return result;
         } catch (Exception e){
             log.error("get key:{} error", key, e);
-            RedisPool.returnBrokenResource(jedis);
+            RedisShardedPool.returnBrokenResource(jedis);
             return null;
         }
     }
@@ -79,16 +79,16 @@ public class RedisPoolUtil {
      * @return
      */
     public static Long expire(String key, int expireTime){
-        Jedis jedis = null;
+        ShardedJedis jedis = null;
         Long result = null;
         try {
-            jedis = RedisPool.getJedis();
+            jedis = RedisShardedPool.getJedis();
             result = jedis.expire(key, expireTime);
-            RedisPool.returnResource(jedis);
+            RedisShardedPool.returnResource(jedis);
             return result;
         } catch (Exception e){
             log.error("expire key:{} expireTime:{} error", key, expireTime, e);
-            RedisPool.returnBrokenResource(jedis);
+            RedisShardedPool.returnBrokenResource(jedis);
             return null;
         }
     }
@@ -99,16 +99,16 @@ public class RedisPoolUtil {
      * @return
      */
     public static Long del(String key){
-        Jedis jedis = null;
+        ShardedJedis jedis = null;
         Long result = null;
         try {
-            jedis = RedisPool.getJedis();
+            jedis = RedisShardedPool.getJedis();
             result = jedis.del(key);
-            RedisPool.returnResource(jedis);
+            RedisShardedPool.returnResource(jedis);
             return result;
         } catch (Exception e){
             log.error("del key:{} error", key, e);
-            RedisPool.returnBrokenResource(jedis);
+            RedisShardedPool.returnBrokenResource(jedis);
             return null;
         }
     }
