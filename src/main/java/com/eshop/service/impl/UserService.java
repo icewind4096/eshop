@@ -2,23 +2,20 @@ package com.eshop.service.impl;
 
 import com.eshop.common.ConstVariable;
 import com.eshop.common.ServerResponse;
-import com.eshop.common.TokenCache;
+import com.eshop.controller.common.SecurityUtil;
 import com.eshop.dao.UserMapper;
 import com.eshop.enums.UserRoleEnum;
 import com.eshop.pojo.User;
 import com.eshop.service.IUserService;
 import com.eshop.util.CookieUtil;
-import com.eshop.util.JSONUtil;
 import com.eshop.util.MD5Util;
 import com.eshop.util.RedisPoolUtil;
-import com.github.pagehelper.util.StringUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import java.util.UUID;
 
 /**
@@ -93,15 +90,10 @@ public class UserService implements IUserService {
 
     @Override
     public ServerResponse<User> getUserInfo(HttpServletRequest httpServletRequest) {
-        String loginToken = CookieUtil.readLoginToken(httpServletRequest);
-        if (StringUtil.isEmpty(loginToken) == false){
-            String userJSON = RedisPoolUtil.get(loginToken);
-            User user = JSONUtil.string2Object(userJSON, User.class);
-            if (user != null){
-                return ServerResponse.createBySuccess(user);
-            }
+        User user = SecurityUtil.getUserInfoByLoginToken(httpServletRequest);
+        if (user != null){
+            return ServerResponse.createBySuccess(user);
         }
-
         return ServerResponse.createByErrorMessage("用户未登陆, 无法获得当前用户登陆信息");
     }
 
@@ -132,7 +124,7 @@ public class UserService implements IUserService {
     public ServerResponse<String> checkAnswer(String userName, String question, String answer) {
         if (userMapper.checkAnswer(userName, question, answer) > 0){
             String forgetToken = UUID.randomUUID().toString();
-            TokenCache.setKey(TokenCache.TOKENPREFIX + userName, forgetToken);
+            RedisPoolUtil.set(ConstVariable.TOKENPREFIX + userName, forgetToken, 60 * 60 * 12);
             return ServerResponse.createBySuccess(forgetToken);
         }
         return ServerResponse.createByErrorMessage("用户问题答案错误");
@@ -149,7 +141,7 @@ public class UserService implements IUserService {
             return ServerResponse.createByErrorMessage("用户不存在");
         }
 
-        String cacheToken = TokenCache.getKey(TokenCache.TOKENPREFIX + userName);
+        String cacheToken = RedisPoolUtil.get(ConstVariable.TOKENPREFIX + userName);
         if (StringUtils.isBlank(cacheToken) == true){
             return ServerResponse.createByErrorMessage("无效的Token");
         }

@@ -3,13 +3,11 @@ package com.eshop.controller.portal;
 import com.alipay.api.AlipayApiException;
 import com.alipay.api.internal.util.AlipaySignature;
 import com.alipay.demo.trade.config.Configs;
-import com.eshop.common.ConstVariable;
 import com.eshop.common.ServerResponse;
-import com.eshop.enums.PayResponseEnum;
+import com.eshop.controller.common.SecurityUtil;
 import com.eshop.enums.ResponseEnum;
 import com.eshop.pojo.User;
 import com.eshop.service.impl.OrderService;
-import com.eshop.vo.OrderProductVO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +17,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -37,8 +34,8 @@ public class OrderController {
 
     @RequestMapping("pay.do")
     @ResponseBody
-    public ServerResponse pay(HttpSession session, Long orderNo, HttpServletRequest request){
-        User user = (User) session.getAttribute(ConstVariable.CURRENTUSER);
+    public ServerResponse pay(HttpServletRequest httpServletRequest, Long orderNo, HttpServletRequest request){
+        User user = SecurityUtil.getUserInfoByLoginToken(httpServletRequest);
         if (user == null) {
             return ServerResponse.createByErrorMessage(ResponseEnum.NEEDLOGIN.getCode(), ResponseEnum.NEEDLOGIN.getMessage());
         }
@@ -86,8 +83,8 @@ public class OrderController {
 
     @RequestMapping("queryOrderPayStatus.do")
     @ResponseBody
-    public ServerResponse<Boolean> queryOrderPayStatus(HttpSession session, Long orderNo){
-        User user = (User) session.getAttribute(ConstVariable.CURRENTUSER);
+    public ServerResponse<Boolean> queryOrderPayStatus(HttpServletRequest httpServletRequest, Long orderNo){
+        User user = SecurityUtil.getUserInfoByLoginToken(httpServletRequest);
         if (user == null) {
             return ServerResponse.createByErrorMessage(ResponseEnum.NEEDLOGIN.getCode(), ResponseEnum.NEEDLOGIN.getMessage());
         }
@@ -100,8 +97,8 @@ public class OrderController {
 
     @RequestMapping("create.do")
     @ResponseBody
-    public ServerResponse create(HttpSession session, Integer shippingId) {
-        User user = (User) session.getAttribute(ConstVariable.CURRENTUSER);
+    public ServerResponse create(HttpServletRequest httpServletRequest, Integer shippingId) {
+        User user = SecurityUtil.getUserInfoByLoginToken(httpServletRequest);
         if (user == null) {
             return ServerResponse.createByErrorMessage(ResponseEnum.NEEDLOGIN.getCode(), ResponseEnum.NEEDLOGIN.getMessage());
         }
@@ -110,8 +107,8 @@ public class OrderController {
 
     @RequestMapping("cancel.do")
     @ResponseBody
-    public ServerResponse cancel(HttpSession session, Long orderNo) {
-        User user = (User) session.getAttribute(ConstVariable.CURRENTUSER);
+    public ServerResponse cancel(HttpServletRequest httpServletRequest, Long orderNo) {
+        User user = SecurityUtil.getUserInfoByLoginToken(httpServletRequest);
         if (user == null) {
             return ServerResponse.createByErrorMessage(ResponseEnum.NEEDLOGIN.getCode(), ResponseEnum.NEEDLOGIN.getMessage());
         }
@@ -120,8 +117,8 @@ public class OrderController {
 
     @RequestMapping("getOrderCateProduct.do")
     @ResponseBody
-    public ServerResponse getOrderCateProduct(HttpSession session) {
-        User user = (User) session.getAttribute(ConstVariable.CURRENTUSER);
+    public ServerResponse getOrderCateProduct(HttpServletRequest httpServletRequest) {
+        User user = SecurityUtil.getUserInfoByLoginToken(httpServletRequest);
         if (user == null) {
             return ServerResponse.createByErrorMessage(ResponseEnum.NEEDLOGIN.getCode(), ResponseEnum.NEEDLOGIN.getMessage());
         }
@@ -130,8 +127,8 @@ public class OrderController {
 
     @RequestMapping("detail.do")
     @ResponseBody
-    public ServerResponse detail(HttpSession session, Long orderNo) {
-        User user = (User) session.getAttribute(ConstVariable.CURRENTUSER);
+    public ServerResponse detail(HttpServletRequest httpServletRequest, Long orderNo) {
+        User user = SecurityUtil.getUserInfoByLoginToken(httpServletRequest);
         if (user == null) {
             return ServerResponse.createByErrorMessage(ResponseEnum.NEEDLOGIN.getCode(), ResponseEnum.NEEDLOGIN.getMessage());
         }
@@ -140,10 +137,10 @@ public class OrderController {
 
     @RequestMapping("list.do")
     @ResponseBody
-    public ServerResponse list(HttpSession session
+    public ServerResponse list(HttpServletRequest httpServletRequest
                               ,@RequestParam(value = "pageNumb", defaultValue = "1") int pageNum
                               ,@RequestParam(value = "pageSize", defaultValue = "1") int pageSize) {
-        User user = (User) session.getAttribute(ConstVariable.CURRENTUSER);
+        User user = SecurityUtil.getUserInfoByLoginToken(httpServletRequest);
         if (user == null) {
             return ServerResponse.createByErrorMessage(ResponseEnum.NEEDLOGIN.getCode(), ResponseEnum.NEEDLOGIN.getMessage());
         }

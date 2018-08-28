@@ -2,6 +2,7 @@ package com.eshop.controller.backend;
 
 import com.eshop.common.ConstVariable;
 import com.eshop.common.ServerResponse;
+import com.eshop.controller.common.SecurityUtil;
 import com.eshop.enums.ResponseEnum;
 import com.eshop.pojo.User;
 import com.eshop.service.impl.OrderService;
@@ -15,7 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import javax.servlet.http.HttpSession;
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * Created by windvalley on 2018/8/11.
@@ -31,10 +32,10 @@ public class OrderManagerController {
 
     @RequestMapping("list.do")
     @ResponseBody
-    public ServerResponse<PageInfo> orderList(HttpSession session
+    public ServerResponse<PageInfo> orderList(HttpServletRequest httpServletRequest
             ,@RequestParam(value = "pageNumb", defaultValue = "1") int pageNum
             ,@RequestParam(value = "pageSize", defaultValue = "1") int pageSize) {
-        User user = (User) session.getAttribute(ConstVariable.CURRENTUSER);
+        User user = SecurityUtil.getUserInfoByLoginToken(httpServletRequest);
         if (user == null) {
             return ServerResponse.createByErrorMessage(ResponseEnum.NEEDLOGIN.getCode(), ResponseEnum.NEEDLOGIN.getMessage());
         }
@@ -48,8 +49,8 @@ public class OrderManagerController {
 
     @RequestMapping("detail.do")
     @ResponseBody
-    public ServerResponse<OrderVO> detail(HttpSession session, Long orderNo) {
-        User user = (User) session.getAttribute(ConstVariable.CURRENTUSER);
+    public ServerResponse<OrderVO> detail(HttpServletRequest httpServletRequest, Long orderNo) {
+        User user = SecurityUtil.getUserInfoByLoginToken(httpServletRequest);
         if (user == null) {
             return ServerResponse.createByErrorMessage(ResponseEnum.NEEDLOGIN.getCode(), ResponseEnum.NEEDLOGIN.getMessage());
         }
@@ -63,10 +64,10 @@ public class OrderManagerController {
 
     @RequestMapping("search.do")
     @ResponseBody
-    public ServerResponse<PageInfo> search(HttpSession session, Long orderNo
+    public ServerResponse<PageInfo> search(HttpServletRequest httpServletRequest, Long orderNo
             ,@RequestParam(value = "pageNumb", defaultValue = "1") int pageNum
             ,@RequestParam(value = "pageSize", defaultValue = "1") int pageSize) {
-        User user = (User) session.getAttribute(ConstVariable.CURRENTUSER);
+        User user = SecurityUtil.getUserInfoByLoginToken(httpServletRequest);
         if (user == null) {
             return ServerResponse.createByErrorMessage(ResponseEnum.NEEDLOGIN.getCode(), ResponseEnum.NEEDLOGIN.getMessage());
         }
@@ -80,8 +81,8 @@ public class OrderManagerController {
 
     @RequestMapping("sendGoods.do")
     @ResponseBody
-    public ServerResponse<String> sendGoods(HttpSession session, Long orderNo) {
-        User user = (User) session.getAttribute(ConstVariable.CURRENTUSER);
+    public ServerResponse<String> sendGoods(HttpServletRequest httpServletRequest, Long orderNo) {
+        User user = SecurityUtil.getUserInfoByLoginToken(httpServletRequest);
         if (user == null) {
             return ServerResponse.createByErrorMessage(ResponseEnum.NEEDLOGIN.getCode(), ResponseEnum.NEEDLOGIN.getMessage());
         }

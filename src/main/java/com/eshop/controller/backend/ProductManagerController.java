@@ -2,6 +2,7 @@ package com.eshop.controller.backend;
 
 import com.eshop.common.ConstVariable;
 import com.eshop.common.ServerResponse;
+import com.eshop.controller.common.SecurityUtil;
 import com.eshop.enums.ResponseEnum;
 import com.eshop.pojo.Product;
 import com.eshop.pojo.User;
@@ -22,7 +23,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import java.util.Map;
 
 /**
@@ -48,8 +48,8 @@ public class ProductManagerController {
      */
     @RequestMapping(value = "save.do", method = RequestMethod.POST)
     @ResponseBody
-    public ServerResponse productSave(HttpSession session, Product product){
-        User user = (User) session.getAttribute(ConstVariable.CURRENTUSER);
+    public ServerResponse productSave(HttpServletRequest httpServletRequest, Product product){
+        User user = SecurityUtil.getUserInfoByLoginToken(httpServletRequest);
         if (user == null){
             return ServerResponse.createByErrorMessage(ResponseEnum.NEEDLOGIN.getCode(), "用户未登录");
         }
@@ -70,8 +70,8 @@ public class ProductManagerController {
      */
     @RequestMapping(value = "setSaleStatus.do", method = RequestMethod.POST)
     @ResponseBody
-    public ServerResponse setSaleStatus(HttpSession session, Integer productId, Integer status){
-        User user = (User) session.getAttribute(ConstVariable.CURRENTUSER);
+    public ServerResponse setSaleStatus(HttpServletRequest httpServletRequest, Integer productId, Integer status){
+        User user = SecurityUtil.getUserInfoByLoginToken(httpServletRequest);
         if (user == null){
             return ServerResponse.createByErrorMessage(ResponseEnum.NEEDLOGIN.getCode(), "用户未登录");
         }
@@ -85,14 +85,13 @@ public class ProductManagerController {
 
     /**
      * 产品详情
-     * @param session
      * @param prodcutId
      * @return
      */
     @RequestMapping(value = "detail.do", method = RequestMethod.POST)
     @ResponseBody
-    public ServerResponse getDetail(HttpSession session, Integer productId){
-        User user = (User) session.getAttribute(ConstVariable.CURRENTUSER);
+    public ServerResponse getDetail(HttpServletRequest httpServletRequest, Integer productId){
+        User user = SecurityUtil.getUserInfoByLoginToken(httpServletRequest);
         if (user == null){
             return ServerResponse.createByErrorMessage(ResponseEnum.NEEDLOGIN.getCode(), "用户未登录");
         }
@@ -113,10 +112,10 @@ public class ProductManagerController {
      */
     @RequestMapping(value = "list.do", method = RequestMethod.POST)
     @ResponseBody
-    public ServerResponse<PageInfo> getList(HttpSession session
+    public ServerResponse<PageInfo> getList(HttpServletRequest httpServletRequest
             , @RequestParam(value = "pageNum", defaultValue = "1")Integer pageNum, @RequestParam(value = "pageSize", defaultValue = "10")Integer pageSize
             , @RequestParam(value = "orderBy", defaultValue = "")String orderBy){
-        User user = (User) session.getAttribute(ConstVariable.CURRENTUSER);
+        User user = SecurityUtil.getUserInfoByLoginToken(httpServletRequest);
         if (user == null){
             return ServerResponse.createByErrorMessage(ResponseEnum.NEEDLOGIN.getCode(), "用户未登录");
         }
@@ -129,11 +128,11 @@ public class ProductManagerController {
 
     @RequestMapping(value = "search.do", method = RequestMethod.POST)
     @ResponseBody
-    public ServerResponse<PageInfo> search(HttpSession session
+    public ServerResponse<PageInfo> search(HttpServletRequest httpServletRequest
             ,@RequestParam(value = "productName", required = false)String productName, @RequestParam(value = "productId", required = false)Integer productId
             ,@RequestParam(value = "pageNum", defaultValue = "1")Integer pageNum, @RequestParam(value = "pageSize", defaultValue = "10")Integer pageSize
             ,@RequestParam(value = "orderBy", defaultValue = "")String orderBy){
-        User user = (User) session.getAttribute(ConstVariable.CURRENTUSER);
+        User user = SecurityUtil.getUserInfoByLoginToken(httpServletRequest);
         if (user == null){
             return ServerResponse.createByErrorMessage(ResponseEnum.NEEDLOGIN.getCode(), "用户未登录");
         }
@@ -146,8 +145,8 @@ public class ProductManagerController {
 
     @RequestMapping(value = "upload.do", method = RequestMethod.POST)
     @ResponseBody
-    public ServerResponse upload(HttpSession session, @RequestParam(value = "uploadFile", required = false) MultipartFile uploadFile, HttpServletRequest request){
-        User user = (User) session.getAttribute(ConstVariable.CURRENTUSER);
+    public ServerResponse upload(HttpServletRequest httpServletRequest, @RequestParam(value = "uploadFile", required = false) MultipartFile uploadFile, HttpServletRequest request){
+        User user = SecurityUtil.getUserInfoByLoginToken(httpServletRequest);
         if (user == null){
             return ServerResponse.createByErrorMessage(ResponseEnum.NEEDLOGIN.getCode(), "用户未登录");
         }
@@ -169,9 +168,9 @@ public class ProductManagerController {
 
     @RequestMapping(value = "richtext_img_upload.do", method = RequestMethod.POST)
     @ResponseBody
-    public Map richTextUpload(HttpSession session, @RequestParam(value = "uploadFile", required = false) MultipartFile uploadFile, HttpServletRequest request, HttpServletResponse response){
+    public Map richTextUpload(HttpServletRequest httpServletRequest, @RequestParam(value = "uploadFile", required = false) MultipartFile uploadFile, HttpServletRequest request, HttpServletResponse response){
         Map resultMap = Maps.newHashMap();
-        User user = (User) session.getAttribute(ConstVariable.CURRENTUSER);
+        User user = SecurityUtil.getUserInfoByLoginToken(httpServletRequest);
         if (user == null) {
             resultMap.put("success", false);
             resultMap.put("msg", "用户未登录 ");

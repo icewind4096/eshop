@@ -9,6 +9,7 @@ import java.util.Set;
  */
 public class ConstVariable {
     public static final String CURRENTUSER = "currentUser";
+    public static final String TOKENPREFIX = "token_";
 
     public static final String USERNAME = "userName";
     public static final String EMAIL = "email";

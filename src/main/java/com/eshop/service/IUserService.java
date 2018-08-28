@@ -2,6 +2,7 @@ package com.eshop.service;
 
 import com.eshop.common.ServerResponse;
 import com.eshop.pojo.User;
+import org.springframework.http.HttpRequest;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;

@@ -2,24 +2,22 @@ package com.eshop.controller.portal;
 
 import com.eshop.common.ConstVariable;
 import com.eshop.common.ServerResponse;
+import com.eshop.controller.common.SecurityUtil;
 import com.eshop.enums.ResponseEnum;
 import com.eshop.pojo.User;
 import com.eshop.service.IUserService;
 import com.eshop.util.CookieUtil;
 import com.eshop.util.JSONUtil;
 import com.eshop.util.RedisPoolUtil;
-import com.github.pagehelper.util.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import javax.xml.ws.Response;
 
 /**
  * Created by windvalley on 2018/7/14.
@@ -142,8 +140,8 @@ public class UserController {
      */
     @RequestMapping(value = "reset_password.do", method = RequestMethod.POST)
     @ResponseBody
-    public ServerResponse<String> resetPassword(HttpSession session, String passwordOld, String passwordNew){
-        User user = (User) session.getAttribute(ConstVariable.CURRENTUSER);
+    public ServerResponse<String> resetPassword(HttpServletRequest httpServletRequest, String passwordOld, String passwordNew){
+        User user = SecurityUtil.getUserInfoByLoginToken(httpServletRequest);
         if (user == null){
             return ServerResponse.createByErrorMessage("用户未登陆");
         }
@@ -158,8 +156,8 @@ public class UserController {
      */
     @RequestMapping(value = "update_information.do", method = RequestMethod.POST)
     @ResponseBody
-    public ServerResponse<User> updateUserInfo(HttpSession session, User user){
-        User currentUser = (User) session.getAttribute(ConstVariable.CURRENTUSER);
+    public ServerResponse<User> updateUserInfo(HttpServletRequest httpServletRequest, User user){
+        User currentUser = SecurityUtil.getUserInfoByLoginToken(httpServletRequest);
         if (currentUser == null){
             return ServerResponse.createByErrorMessage("用户未登陆");
         }
@@ -170,7 +168,8 @@ public class UserController {
         ServerResponse<User> serverResponse = userService.updateInformation(user);
         if (serverResponse.isSuccess() == true){
             serverResponse.getData().setUsername(currentUser.getUsername());
-            session.setAttribute(ConstVariable.CURRENTUSER, serverResponse.getData());
+            String loginToken = CookieUtil.readLoginToken(httpServletRequest);
+            RedisPoolUtil.set(loginToken, JSONUtil.object2String(serverResponse.getData()), ConstVariable.RedisCache.REDIS_SESSION_EXTIME);
         }
         return serverResponse;
     }
@@ -182,8 +181,8 @@ public class UserController {
      */
     @RequestMapping(value = "get_information.do", method = RequestMethod.POST)
     @ResponseBody
-    public ServerResponse<User> getInformation(HttpSession session){
-        User user = (User) session.getAttribute(ConstVariable.CURRENTUSER);
+    public ServerResponse<User> getInformation(HttpServletRequest httpServletRequest){
+        User user = SecurityUtil.getUserInfoByLoginToken(httpServletRequest);
         if (user == null){
             return ServerResponse.createByErrorMessage(ResponseEnum.NEEDLOGIN.getCode(), "未登录， 请先登录");
         }

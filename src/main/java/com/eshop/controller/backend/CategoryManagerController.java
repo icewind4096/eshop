@@ -2,6 +2,7 @@ package com.eshop.controller.backend;
 
 import com.eshop.common.ConstVariable;
 import com.eshop.common.ServerResponse;
+import com.eshop.controller.common.SecurityUtil;
 import com.eshop.enums.ResponseEnum;
 import com.eshop.pojo.User;
 import com.eshop.service.ICategoryService;
@@ -12,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import javax.servlet.http.HttpSession;
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * Created by mecwa on 2018/7/16.
@@ -28,8 +29,8 @@ public class CategoryManagerController {
 
     @RequestMapping("add_category.do")
     @ResponseBody
-    public ServerResponse addCategory(HttpSession session, String categoryName, @RequestParam(value = "parentId", defaultValue = "0") int parentId){
-        User user = (User) session.getAttribute(ConstVariable.CURRENTUSER);
+    public ServerResponse addCategory(HttpServletRequest httpServletRequest, String categoryName, @RequestParam(value = "parentId", defaultValue = "0") int parentId){
+        User user = SecurityUtil.getUserInfoByLoginToken(httpServletRequest);
         if (user == null){
            return ServerResponse.createByErrorMessage(ResponseEnum.NEEDLOGIN.getCode(), "用户未登录");
         }
@@ -43,8 +44,8 @@ public class CategoryManagerController {
 
     @RequestMapping("set_category_name.do")
     @ResponseBody
-    public ServerResponse updateCategoryName(HttpSession session, Integer categoryId, String categoryName){
-        User user = (User) session.getAttribute(ConstVariable.CURRENTUSER);
+    public ServerResponse updateCategoryName(HttpServletRequest httpServletRequest, Integer categoryId, String categoryName){
+        User user = SecurityUtil.getUserInfoByLoginToken(httpServletRequest);
         if (user == null){
             return ServerResponse.createByErrorMessage(ResponseEnum.NEEDLOGIN.getCode(), "用户未登录");
         }
@@ -58,8 +59,8 @@ public class CategoryManagerController {
 
     @RequestMapping("get_category.do")
     @ResponseBody
-    public ServerResponse getChildrenParallelCategory(HttpSession session, @RequestParam(value = "categoryId", defaultValue = "0") int categoryId){
-        User user = (User) session.getAttribute(ConstVariable.CURRENTUSER);
+    public ServerResponse getChildrenParallelCategory(HttpServletRequest httpServletRequest, @RequestParam(value = "categoryId", defaultValue = "0") int categoryId){
+        User user = SecurityUtil.getUserInfoByLoginToken(httpServletRequest);
         if (user == null){
             return ServerResponse.createByErrorMessage(ResponseEnum.NEEDLOGIN.getCode(), "用户未登录");
         }
@@ -73,8 +74,8 @@ public class CategoryManagerController {
 
     @RequestMapping("get_deep_category.do")
     @ResponseBody
-    public ServerResponse getDeepChildrenParallelCategory(HttpSession session, @RequestParam(value = "categoryId", defaultValue = "0") int categoryId){
-        User user = (User) session.getAttribute(ConstVariable.CURRENTUSER);
+    public ServerResponse getDeepChildrenParallelCategory(HttpServletRequest httpServletRequest, @RequestParam(value = "categoryId", defaultValue = "0") int categoryId){
+        User user = SecurityUtil.getUserInfoByLoginToken(httpServletRequest);
         if (user == null){
             return ServerResponse.createByErrorMessage(ResponseEnum.NEEDLOGIN.getCode(), "用户未登录");
         }

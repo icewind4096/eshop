@@ -1,7 +1,6 @@
 package com.eshop.controller.common;
 
 import com.eshop.common.ConstVariable;
-import com.eshop.common.RedisPool;
 import com.eshop.pojo.User;
 import com.eshop.util.CookieUtil;
 import com.eshop.util.JSONUtil;

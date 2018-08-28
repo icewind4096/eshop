@@ -1,7 +1,7 @@
 package com.eshop.controller.portal;
 
-import com.eshop.common.ConstVariable;
 import com.eshop.common.ServerResponse;
+import com.eshop.controller.common.SecurityUtil;
 import com.eshop.enums.ResponseEnum;
 import com.eshop.pojo.Shipping;
 import com.eshop.pojo.User;
@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import javax.servlet.http.HttpSession;
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * Created by windvalley on 2018/7/29.
@@ -26,8 +26,8 @@ public class ShippingController {
 
     @RequestMapping("add.do")
     @ResponseBody
-    public ServerResponse add(HttpSession session, Shipping shipping){
-        User user = (User) session.getAttribute(ConstVariable.CURRENTUSER);
+    public ServerResponse add(HttpServletRequest httpServletRequest, Shipping shipping){
+        User user = SecurityUtil.getUserInfoByLoginToken(httpServletRequest);
         if (user == null) {
             return ServerResponse.createByErrorMessage(ResponseEnum.NEEDLOGIN.getCode(), ResponseEnum.NEEDLOGIN.getMessage());
         }
@@ -36,8 +36,8 @@ public class ShippingController {
 
     @RequestMapping("delete.do")
     @ResponseBody
-    public ServerResponse delete(HttpSession session, Integer shippingId){
-        User user = (User) session.getAttribute(ConstVariable.CURRENTUSER);
+    public ServerResponse delete(HttpServletRequest httpServletRequest, Integer shippingId){
+        User user = SecurityUtil.getUserInfoByLoginToken(httpServletRequest);
         if (user == null) {
             return ServerResponse.createByErrorMessage(ResponseEnum.NEEDLOGIN.getCode(), ResponseEnum.NEEDLOGIN.getMessage());
         }
@@ -46,8 +46,8 @@ public class ShippingController {
 
     @RequestMapping("update.do")
     @ResponseBody
-    public ServerResponse update(HttpSession session, Shipping shipping){
-        User user = (User) session.getAttribute(ConstVariable.CURRENTUSER);
+    public ServerResponse update(HttpServletRequest httpServletRequest, Shipping shipping){
+        User user = SecurityUtil.getUserInfoByLoginToken(httpServletRequest);
         if (user == null) {
             return ServerResponse.createByErrorMessage(ResponseEnum.NEEDLOGIN.getCode(), ResponseEnum.NEEDLOGIN.getMessage());
         }
@@ -56,8 +56,8 @@ public class ShippingController {
 
     @RequestMapping("select.do")
     @ResponseBody
-    public ServerResponse<Shipping> select(HttpSession session, Integer shippingId){
-        User user = (User) session.getAttribute(ConstVariable.CURRENTUSER);
+    public ServerResponse<Shipping> select(HttpServletRequest httpServletRequest, Integer shippingId){
+        User user = SecurityUtil.getUserInfoByLoginToken(httpServletRequest);
         if (user == null) {
             return ServerResponse.createByErrorMessage(ResponseEnum.NEEDLOGIN.getCode(), ResponseEnum.NEEDLOGIN.getMessage());
         }
@@ -66,9 +66,10 @@ public class ShippingController {
 
     @RequestMapping("list.do")
     @ResponseBody
-    public ServerResponse<PageInfo> list(HttpSession session, @RequestParam(value = "pageNum", defaultValue = "1") int pageNum
+    public ServerResponse<PageInfo> list(HttpServletRequest httpServletRequest
+                                    ,@RequestParam(value = "pageNum", defaultValue = "1") int pageNum
                                     ,@RequestParam(value = "pageSize", defaultValue = "1") int pageSize){
-        User user = (User) session.getAttribute(ConstVariable.CURRENTUSER);
+        User user = SecurityUtil.getUserInfoByLoginToken(httpServletRequest);
         if (user == null) {
             return ServerResponse.createByErrorMessage(ResponseEnum.NEEDLOGIN.getCode(), ResponseEnum.NEEDLOGIN.getMessage());
         }
