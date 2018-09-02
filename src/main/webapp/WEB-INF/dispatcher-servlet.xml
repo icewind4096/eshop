@@ -8,7 +8,14 @@
 	http://www.springframework.org/schema/mvc
 	http://www.springframework.org/schema/mvc/spring-mvc.xsd">
 
-    <context:component-scan base-package="com.eshop" annotation-config="true"/>
+    <context:component-scan base-package="com.eshop.controller" annotation-config="true" use-default-filters="false">
+        <!--
+            扫描com.eshop以下的包，但是只扫描注解为controller的包
+            默认扫描 use-default-filters="false" 必须设置为false
+            让扫描其他需要注入的包的任务交给spring来做， 也就是applicationContext.xml
+         -->
+        <context:include-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
+    </context:component-scan>
 
     <mvc:annotation-driven>
         <mvc:message-converters>

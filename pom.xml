@@ -259,6 +259,13 @@
       <artifactId>lombok</artifactId>
       <version>1.16.18</version>
     </dependency>
+
+    <!-- Spring session   -->
+    <dependency>
+      <groupId>org.springframework.session</groupId>
+      <artifactId>spring-session-data-redis</artifactId>
+      <version>1.2.0.RELEASE</version>
+    </dependency>
   </dependencies>
 
   <build>

@@ -9,12 +9,20 @@
      http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
      http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd">
 
-    <context:component-scan base-package="com.eshop" annotation-config="true"/>
+    <context:component-scan base-package="com.eshop" annotation-config="true">
+        <!--
+            扫描com.eshop以下的包，但是排除注解为controller的包
+            让扫描controller的包的任务交给springmvc来做， 也就是dispatcher-servlet.xml
+         -->
+        <context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
+    </context:component-scan>
 
-    <!--<context:annotation-config/>-->
     <aop:aspectj-autoproxy/>
 
     <import resource="applicationContext-datasource.xml"/>
+    <!-- 如果使用spring session框架， 引入如下配置文件
+    <import resource="applicationContext-springsession.xml"/>
+    -->
 
     <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
         <!-- 设定默认编码 -->

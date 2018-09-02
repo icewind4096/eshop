@@ -20,6 +20,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 /**
+ * 使用redis分布式实现单点登录
  * Created by windvalley on 2018/7/14.
  */
 

@@ -23,7 +23,7 @@
         <url-pattern>/*</url-pattern>
     </filter-mapping>
 
-    <!-- 重置session时间的filter start -->
+    <!-- 重置session时间的filter start 使用自己写的redis分布式 -->
     <filter>
         <filter-name>sessionExpireFilter</filter-name>
         <filter-class>com.eshop.controller.common.SessionExpireFilter</filter-class>
@@ -33,6 +33,17 @@
         <url-pattern>*.do</url-pattern>
     </filter-mapping>
     <!-- end -->
+
+    <!-- 重置session时间的filter start 使用 spring session 框架
+    <filter>
+        <filter-name>springSessionRepositoryFilter</filter-name>
+        <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>springSessionRepositoryFilter</filter-name>
+        <url-pattern>*.do</url-pattern>
+    </filter-mapping>
+    重置session时间的filter end -->
 
     <listener>
         <listener-class>org.springframework.web.context.request.RequestContextListener</listener-class>
