@@ -29,7 +29,7 @@ import java.util.Map;
  * Created by windvalley on 2018/7/18.
  */
 @Controller
-@RequestMapping("/manager/product")
+@RequestMapping("/manager/product/")
 public class ProductManagerController {
     @Autowired
     private IUserService userService;
@@ -49,6 +49,7 @@ public class ProductManagerController {
     @RequestMapping(value = "save.do", method = RequestMethod.POST)
     @ResponseBody
     public ServerResponse productSave(HttpServletRequest httpServletRequest, Product product){
+        /*
         User user = SecurityUtil.getUserInfoByLoginToken(httpServletRequest);
         if (user == null){
             return ServerResponse.createByErrorMessage(ResponseEnum.NEEDLOGIN.getCode(), "用户未登录");
@@ -57,7 +58,7 @@ public class ProductManagerController {
         if (userService.checkAdminRole(user).isSuccess() == false){
             return ServerResponse.createByErrorMessage(ResponseEnum.NEEDLOGIN.getCode(), "用户无管理员权限");
         }
-
+        */
         return productService.saveProduct(product);
     }
 
@@ -71,6 +72,7 @@ public class ProductManagerController {
     @RequestMapping(value = "setSaleStatus.do", method = RequestMethod.POST)
     @ResponseBody
     public ServerResponse setSaleStatus(HttpServletRequest httpServletRequest, Integer productId, Integer status){
+        /*
         User user = SecurityUtil.getUserInfoByLoginToken(httpServletRequest);
         if (user == null){
             return ServerResponse.createByErrorMessage(ResponseEnum.NEEDLOGIN.getCode(), "用户未登录");
@@ -79,7 +81,7 @@ public class ProductManagerController {
         if (userService.checkAdminRole(user).isSuccess() == false){
             return ServerResponse.createByErrorMessage(ResponseEnum.NEEDLOGIN.getCode(), "用户无管理员权限");
         }
-
+        */
         return productService.setSaleStatus(productId, status);
     }
 
@@ -91,6 +93,7 @@ public class ProductManagerController {
     @RequestMapping(value = "detail.do", method = RequestMethod.POST)
     @ResponseBody
     public ServerResponse getDetail(HttpServletRequest httpServletRequest, Integer productId){
+        /*
         User user = SecurityUtil.getUserInfoByLoginToken(httpServletRequest);
         if (user == null){
             return ServerResponse.createByErrorMessage(ResponseEnum.NEEDLOGIN.getCode(), "用户未登录");
@@ -99,7 +102,7 @@ public class ProductManagerController {
         if (userService.checkAdminRole(user).isSuccess() == false){
             return ServerResponse.createByErrorMessage(ResponseEnum.NEEDLOGIN.getCode(), "用户无管理员权限");
         }
-
+        */
         return productService.managerProductDetail(productId);
     }
 
@@ -115,6 +118,7 @@ public class ProductManagerController {
     public ServerResponse<PageInfo> getList(HttpServletRequest httpServletRequest
             , @RequestParam(value = "pageNum", defaultValue = "1")Integer pageNum, @RequestParam(value = "pageSize", defaultValue = "10")Integer pageSize
             , @RequestParam(value = "orderBy", defaultValue = "")String orderBy){
+        /*
         User user = SecurityUtil.getUserInfoByLoginToken(httpServletRequest);
         if (user == null){
             return ServerResponse.createByErrorMessage(ResponseEnum.NEEDLOGIN.getCode(), "用户未登录");
@@ -123,6 +127,7 @@ public class ProductManagerController {
         if (userService.checkAdminRole(user).isSuccess() == false){
             return ServerResponse.createByErrorMessage(ResponseEnum.NEEDLOGIN.getCode(), "用户无管理员权限");
         }
+        */
         return productService.getProductList(pageNum, pageSize, orderBy);
     }
 
@@ -132,6 +137,7 @@ public class ProductManagerController {
             ,@RequestParam(value = "productName", required = false)String productName, @RequestParam(value = "productId", required = false)Integer productId
             ,@RequestParam(value = "pageNum", defaultValue = "1")Integer pageNum, @RequestParam(value = "pageSize", defaultValue = "10")Integer pageSize
             ,@RequestParam(value = "orderBy", defaultValue = "")String orderBy){
+        /*
         User user = SecurityUtil.getUserInfoByLoginToken(httpServletRequest);
         if (user == null){
             return ServerResponse.createByErrorMessage(ResponseEnum.NEEDLOGIN.getCode(), "用户未登录");
@@ -140,12 +146,14 @@ public class ProductManagerController {
         if (userService.checkAdminRole(user).isSuccess() == false){
             return ServerResponse.createByErrorMessage(ResponseEnum.NEEDLOGIN.getCode(), "用户无管理员权限");
         }
+        */
         return productService.searchProduct(productName, productId, pageNum, pageSize, orderBy);
     }
 
     @RequestMapping(value = "upload.do", method = RequestMethod.POST)
     @ResponseBody
     public ServerResponse upload(HttpServletRequest httpServletRequest, @RequestParam(value = "uploadFile", required = false) MultipartFile uploadFile, HttpServletRequest request){
+        /*
         User user = SecurityUtil.getUserInfoByLoginToken(httpServletRequest);
         if (user == null){
             return ServerResponse.createByErrorMessage(ResponseEnum.NEEDLOGIN.getCode(), "用户未登录");
@@ -154,6 +162,7 @@ public class ProductManagerController {
         if (userService.checkAdminRole(user).isSuccess() == false){
             return ServerResponse.createByErrorMessage(ResponseEnum.NEEDLOGIN.getCode(), "用户无管理员权限");
         }
+        */
 
         String path = request.getSession().getServletContext().getRealPath("upload");
         String targetFileName = fileService.upload(uploadFile, path);
@@ -170,6 +179,7 @@ public class ProductManagerController {
     @ResponseBody
     public Map richTextUpload(HttpServletRequest httpServletRequest, @RequestParam(value = "uploadFile", required = false) MultipartFile uploadFile, HttpServletRequest request, HttpServletResponse response){
         Map resultMap = Maps.newHashMap();
+        /*
         User user = SecurityUtil.getUserInfoByLoginToken(httpServletRequest);
         if (user == null) {
             resultMap.put("success", false);
@@ -182,6 +192,7 @@ public class ProductManagerController {
             resultMap.put("msg", "无管理员权限");
             return resultMap;
         }
+        */
 
         //使用的是simditor，所以必须按照simditor的要求放回
         String path = request.getSession().getServletContext().getRealPath("upload");

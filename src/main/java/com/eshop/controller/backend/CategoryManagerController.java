@@ -30,14 +30,17 @@ public class CategoryManagerController {
     @RequestMapping("add_category.do")
     @ResponseBody
     public ServerResponse addCategory(HttpServletRequest httpServletRequest, String categoryName, @RequestParam(value = "parentId", defaultValue = "0") int parentId){
+        /*
         User user = SecurityUtil.getUserInfoByLoginToken(httpServletRequest);
         if (user == null){
            return ServerResponse.createByErrorMessage(ResponseEnum.NEEDLOGIN.getCode(), "用户未登录");
         }
 
         if (userService.checkAdminRole(user).isSuccess() == false){
-            return ServerResponse.createByErrorMessage(ResponseEnum.NEEDLOGIN.getCode(), "用户们管理员权限");
+            return ServerResponse.createByErrorMessage(ResponseEnum.NEEDLOGIN.getCode(), "用户无管理员权限");
         }
+        */
+        //注释部分是不使用拦截器时的验证代码，当前已全部改为拦截器处理，所以全部注释掉
 
         return categoryService.addCategory(categoryName, parentId);
     }
@@ -45,6 +48,7 @@ public class CategoryManagerController {
     @RequestMapping("set_category_name.do")
     @ResponseBody
     public ServerResponse updateCategoryName(HttpServletRequest httpServletRequest, Integer categoryId, String categoryName){
+        /*
         User user = SecurityUtil.getUserInfoByLoginToken(httpServletRequest);
         if (user == null){
             return ServerResponse.createByErrorMessage(ResponseEnum.NEEDLOGIN.getCode(), "用户未登录");
@@ -53,13 +57,14 @@ public class CategoryManagerController {
         if (userService.checkAdminRole(user).isSuccess() == false){
             return ServerResponse.createByErrorMessage(ResponseEnum.NEEDLOGIN.getCode(), "用户们管理员权限");
         }
-
+        */
         return categoryService.updateCategoryName(categoryId, categoryName);
     }
 
     @RequestMapping("get_category.do")
     @ResponseBody
     public ServerResponse getChildrenParallelCategory(HttpServletRequest httpServletRequest, @RequestParam(value = "categoryId", defaultValue = "0") int categoryId){
+        /*
         User user = SecurityUtil.getUserInfoByLoginToken(httpServletRequest);
         if (user == null){
             return ServerResponse.createByErrorMessage(ResponseEnum.NEEDLOGIN.getCode(), "用户未登录");
@@ -68,13 +73,14 @@ public class CategoryManagerController {
         if (userService.checkAdminRole(user).isSuccess() == false){
             return ServerResponse.createByErrorMessage(ResponseEnum.NEEDLOGIN.getCode(), "用户们管理员权限");
         }
-
+        */
         return categoryService.getChildrenParallelCategory(categoryId);
     }
 
     @RequestMapping("get_deep_category.do")
     @ResponseBody
     public ServerResponse getDeepChildrenParallelCategory(HttpServletRequest httpServletRequest, @RequestParam(value = "categoryId", defaultValue = "0") int categoryId){
+        /*
         User user = SecurityUtil.getUserInfoByLoginToken(httpServletRequest);
         if (user == null){
             return ServerResponse.createByErrorMessage(ResponseEnum.NEEDLOGIN.getCode(), "用户未登录");
@@ -83,7 +89,7 @@ public class CategoryManagerController {
         if (userService.checkAdminRole(user).isSuccess() == false){
             return ServerResponse.createByErrorMessage(ResponseEnum.NEEDLOGIN.getCode(), "用户们管理员权限");
         }
-
+        */
         return categoryService.selectCategoryAndChildrenById(categoryId);
     }
 }

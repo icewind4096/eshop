@@ -22,7 +22,7 @@ import javax.servlet.http.HttpServletRequest;
  * Created by windvalley on 2018/8/11.
  */
 @Controller
-@RequestMapping("/manager/order")
+@RequestMapping("/manager/order/")
 public class OrderManagerController {
     @Autowired
     private UserService userService;
@@ -35,6 +35,7 @@ public class OrderManagerController {
     public ServerResponse<PageInfo> orderList(HttpServletRequest httpServletRequest
             ,@RequestParam(value = "pageNumb", defaultValue = "1") int pageNum
             ,@RequestParam(value = "pageSize", defaultValue = "1") int pageSize) {
+        /*
         User user = SecurityUtil.getUserInfoByLoginToken(httpServletRequest);
         if (user == null) {
             return ServerResponse.createByErrorMessage(ResponseEnum.NEEDLOGIN.getCode(), ResponseEnum.NEEDLOGIN.getMessage());
@@ -43,13 +44,14 @@ public class OrderManagerController {
         if (userService.checkAdminRole(user).isSuccess() == false) {
             return ServerResponse.createByErrorMessage(ResponseEnum.NEEDLOGIN.getCode(), "用户没有管理员权限");
         }
-
+        */
         return orderService.managerList(pageNum, pageSize);
     }
 
     @RequestMapping("detail.do")
     @ResponseBody
     public ServerResponse<OrderVO> detail(HttpServletRequest httpServletRequest, Long orderNo) {
+        /*
         User user = SecurityUtil.getUserInfoByLoginToken(httpServletRequest);
         if (user == null) {
             return ServerResponse.createByErrorMessage(ResponseEnum.NEEDLOGIN.getCode(), ResponseEnum.NEEDLOGIN.getMessage());
@@ -58,7 +60,7 @@ public class OrderManagerController {
         if (userService.checkAdminRole(user).isSuccess() == false) {
             return ServerResponse.createByErrorMessage(ResponseEnum.NEEDLOGIN.getCode(), "用户没有管理员权限");
         }
-
+        */
         return orderService.managerDetail(orderNo);
     }
 
@@ -67,6 +69,7 @@ public class OrderManagerController {
     public ServerResponse<PageInfo> search(HttpServletRequest httpServletRequest, Long orderNo
             ,@RequestParam(value = "pageNumb", defaultValue = "1") int pageNum
             ,@RequestParam(value = "pageSize", defaultValue = "1") int pageSize) {
+        /*
         User user = SecurityUtil.getUserInfoByLoginToken(httpServletRequest);
         if (user == null) {
             return ServerResponse.createByErrorMessage(ResponseEnum.NEEDLOGIN.getCode(), ResponseEnum.NEEDLOGIN.getMessage());
@@ -75,13 +78,14 @@ public class OrderManagerController {
         if (userService.checkAdminRole(user).isSuccess() == false) {
             return ServerResponse.createByErrorMessage(ResponseEnum.NEEDLOGIN.getCode(), "用户没有管理员权限");
         }
-
+        */
         return orderService.managerSearch(orderNo, pageNum, pageSize);
     }
 
     @RequestMapping("sendGoods.do")
     @ResponseBody
     public ServerResponse<String> sendGoods(HttpServletRequest httpServletRequest, Long orderNo) {
+        /*
         User user = SecurityUtil.getUserInfoByLoginToken(httpServletRequest);
         if (user == null) {
             return ServerResponse.createByErrorMessage(ResponseEnum.NEEDLOGIN.getCode(), ResponseEnum.NEEDLOGIN.getMessage());
@@ -90,7 +94,7 @@ public class OrderManagerController {
         if (userService.checkAdminRole(user).isSuccess() == false) {
             return ServerResponse.createByErrorMessage(ResponseEnum.NEEDLOGIN.getCode(), "用户没有管理员权限");
         }
-
+        */
         return orderService.managerSendGoods(orderNo);
     }
 }
